@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     colors: {
       white: "#F8FAFC",
+      black: "#010203",
       containerBorder: "#97A3B6",
       selectedColor: "#3662E3",
       taskIconsBackground: "#E3E8EF",
