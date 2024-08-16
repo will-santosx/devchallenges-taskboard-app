@@ -9,22 +9,45 @@ type TaskPayload = {
 }
 
 export async function GET() {
-    let tasks = await prisma.task.findMany()
-    return NextResponse.json({msg: tasks})
+    try {
+        const tasks = await prisma.task.findMany();
+        return NextResponse.json({ tasks });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to retrieve tasks" }, { status: 500 });
+    }
 }
 
 export async function POST(req: Request) {
-    const body: TaskPayload = await req.json()
-    if (!body) {
-        return NextResponse.json({msg: "invalid request. check the parameters"}, {status: 400})
+    try {
+        const body: TaskPayload = await req.json();
+
+        if (!body.title || !body.description || !body.icon || !body.status) {
+            return NextResponse.json(
+                { error: "Invalid request. Check the parameters." },
+                { status: 400 }
+            );
+        }
+
+        const sameNameTask = await prisma.task.findFirst({ where: { title: body.title } });
+
+        if (sameNameTask) {
+            return NextResponse.json(
+                { error: "A task with the same name already exists." },
+                { status: 400 }
+            );
+        }
+
+        const task = await prisma.task.create({
+            data: {
+                title: body.title,
+                description: body.description,
+                icon: body.icon,
+                status: body.status,
+            },
+        });
+
+        return NextResponse.json({ task }, { status: 201 });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to create task" }, { status: 500 });
     }
-    let sameNameTask = await prisma.task.findFirst({where: {title: body.title}})
-    if (sameNameTask) {return NextResponse.json({msg: "invalid request. a task with that name already exists"}, {status: 400})}
-    const task = await prisma.task.create({ data: {
-        title: body.title,
-        description: body.description,
-        icon: body.icon,
-        status: body.status
-    } });
-    return NextResponse.json({msg: task}, {status: 201})
 }

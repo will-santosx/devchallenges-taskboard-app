@@ -10,35 +10,69 @@ type RequestPayload = {
   description?: string,
   icon: 1 | 2 | 3 | 4,
   status?: "todo" | "wontdo" | "progress" | "done"
-
 }
 
-export async function GET(req:Request, {params}: {params: Params}) {
-  let taskByID = await prisma.task.findUnique({ where: { id: params.id } });
-  if (!taskByID)
+export async function GET(req: Request, { params }: { params: Params }) {
+  try {
+    const taskByID = await prisma.task.findUnique({ where: { id: params.id } });
+
+    if (!taskByID) {
+      return NextResponse.json(
+        { error: "Invalid request. Invalid task identifier." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ task: taskByID }, { status: 200 });
+  } catch (error) {
     return NextResponse.json(
-      { msg: "invalid request. invalid task identifier" },
-      { status: 400 }
+      { error: "Failed to retrieve task." },
+      { status: 500 }
     );
-  return NextResponse.json({ msg: taskByID }, { status: 200 });
+  }
 }
 
-export async function PATCH(req: Request, {params}:{params: Params}){
-  let taskByID = await prisma.task.findUnique({where: {id: params.id}})
-  let body: RequestPayload = await req.json()
-  if (!taskByID) return NextResponse.json({msg: "invalid request. invalid task identifier"}, {status: 400})
-  let updatedTask = await prisma.task.update({
-    where: { id: params.id },
-    data: {
-      title: body.title,
-      description: body.description,
-      status: body.status,
-    },
-  });
-  return NextResponse.json({msg: updatedTask}, {status: 200})
+export async function PATCH(req: Request, { params }: { params: Params }) {
+  try {
+    const taskByID = await prisma.task.findUnique({ where: { id: params.id } });
+
+    if (!taskByID) {
+      return NextResponse.json(
+        { error: "Invalid request. Invalid task identifier." },
+        { status: 404 }
+      );
+    }
+
+    const body: RequestPayload = await req.json();
+
+    const updatedTask = await prisma.task.update({
+      where: { id: params.id },
+      data: {
+        title: body.title,
+        description: body.description,
+        icon: body.icon,
+        status: body.status,
+      },
+    });
+
+    return NextResponse.json({ task: updatedTask }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update task." },
+      { status: 500 }
+    );
+  }
 }
 
-export async function DELETE({params}:{params: Params}){
-  let deletedTask = await prisma.task.delete({ where: { id: params.id } });
-  return NextResponse.json({msg: deletedTask}, {status: 200})
+export async function DELETE(req: Request, { params }: { params: Params }) {
+  try {
+    const deletedTask = await prisma.task.delete({ where: { id: params.id } });
+
+    return NextResponse.json({ task: deletedTask }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete task." },
+      { status: 500 }
+    );
+  }
 }
