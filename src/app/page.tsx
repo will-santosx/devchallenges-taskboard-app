@@ -21,7 +21,7 @@ export async function updateTask(
 		method: 'PATCH',
 		body: JSON.stringify({ title, description, status, icon }),
 	});
-	//window.location.reload()
+	window.location.reload()
 }
 
 export default function Home() {
