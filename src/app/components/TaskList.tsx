@@ -15,14 +15,14 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
 					</span>
 				</div>
 			)}
-			{tasks && tasks.length < 1 && (
+			{!tasks && (
 				<div className="w-full h-full flex justify-center items-center">
 					<span className="text-[20px]">
 						Nenhuma tarefa foi adicionada...
 					</span>
 				</div>
 			)}
-			{tasks.length > 0 &&
+			{tasks && tasks.length > 0 &&
 				tasks.map((task, index) => (
 					<TaskItem
 						key={index}
