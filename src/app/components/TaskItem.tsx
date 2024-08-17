@@ -1,14 +1,14 @@
 import { useDebugValue, useState } from 'react';
 import { Clock, CheckCheck, X } from 'lucide-react';
 import SlideMenu from './SlideMenu';
-import { deleteTask, updateTask } from '../page';
+import { deleteTask, updateTask } from '../../database';
 
 export interface TaskItemProps {
 	id: string;
 	title: string;
 	status: 'todo' | 'wontdo' | 'progress' | 'done';
 	icon: number;
-	description: string;
+	description?: string;
 }
 
 export default function TaskItem(props: TaskItemProps) {
@@ -77,7 +77,7 @@ export default function TaskItem(props: TaskItemProps) {
 		status: string,
 		icon: number,
 		id: string,
-		description: string,
+		description?: string,
 	) {
 		updateTask(id, title, description, status, icon);
 	}
@@ -108,7 +108,7 @@ export default function TaskItem(props: TaskItemProps) {
 						{status[2]}
 					</div>
 				</div>
-				{props.description !== undefined && (
+				{props.description && (
 					<div
 						className={`${status[1]} bg-opacity-20 rounded-lg w-full flex p-2`}
 					>

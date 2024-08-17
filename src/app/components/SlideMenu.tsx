@@ -6,7 +6,7 @@ interface SlideMenuProps {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
-	description: string;
+	description?: string;
 	status: string;
 	icon: number;
     id: string;
@@ -15,7 +15,7 @@ interface SlideMenuProps {
 		status: string,
 		icon: number,
         id: string,
-		description: string,
+		description?: string,
 	) => void;
 	onDelete: (id:string) => void;
 }
