@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   try {
     const task = await prisma.task.create({
       data: {
-        title: "Nova Ativade",
+        title: "Nova Tarefa",
         description: "",
         icon: 1,
         status: "todo",
